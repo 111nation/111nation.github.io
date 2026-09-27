@@ -47,7 +47,7 @@ capitalizeListTitles = false
   [params.author]
     name = "@111nation"
     initials = "<3"
-    bio = "Heyy!\n\nI love learning and making tools! I'm obsessed with Operating Systems and understanding computers down to the silicon level. In my free time I enjoy experimenting with VMs, learning about systems, and contributing to Free/Libre Open Source.\n\nMy philosophy of free/libre computing is heavily inspired by the revolutions of GNU, GNOME, KDE, and other FOSS projects.\n\nAll my work is a tribute to the amazing geniuses and contributors to modern computing (Ada Lovelace, Bill Joy, Richard Stallman, et al.).\n\nI hope you enjoy my devblog!\n\n~ 111nation"
+    bio = "An aspiring System Engineer\n\nGithub: @111nation"
 
   [params.comments]
     provider = "none"     # none | giscus | utterances
