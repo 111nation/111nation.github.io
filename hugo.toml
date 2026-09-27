@@ -51,3 +51,12 @@ capitalizeListTitles = false
 
   [params.comments]
     provider = "none"     # none | giscus | utterances
+
+[menus]
+	[[menus.main]]
+	name = "Github"
+	url = "https://github.com/111nation"
+	[menus.main.params]
+		tooltip = "View my GitHub"
+		
+
