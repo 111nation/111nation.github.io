@@ -26,11 +26,13 @@ My desire of actually making use of this information manifested in me making a v
 
 Suprisingly a lot! My goal with Editor was to not use any 3rd party libraries, only restricting myself to core system libraries and system calls. This forced me to see how userland utilities behave at the lowest level, inevitably uncovering the 'blackboxes' of how Operating Systems function.
 
-## Getting Started
+## Technical Dive
 
+{{< alert type="warning" title="Warning" >}}
+Code examples are purposefully simplified for illustrative purposes, view the whole source code [here](https://github.com/111nation/Editor)
+{{</ alert >}}
 
-
-### Printing to the terminal
+### Setting up the terminal 
 
 Before we are able to modify files and write to them we need to, well, figure out how we are going to display our text and statuses to the terminal. According to both the *Operating Systems* book and antirez's guide, terminals by default are loaded into **cooked** or **cononical mode**. This means that a shell such as `/bin/bash` allow you to type a full command such as
 
@@ -83,5 +85,74 @@ void enableRawMode() {
 
 Let's say the user is done editing their text and exits the editor. There is a problem! The operating system still leaves the terminal in raw mode, which is very bad for other processes (programs). We restore old settings in `disableRawMode` by giving [`tcsetattr`](https://man7.org/linux/man-pages/man3/tcgetattr.3.html) the old terminal settings, `esettings.orig_termios`.
 
+Just like that we have successfully prepped the terminal for Editor :)
+
+### Key Input, The Right Way
 
 
+*'I thought we were done with key input!' :(*
+
+Turns out, even though Editor recieves key input instantly, this is being received as byte streams. It is our job to format and interpret these bytes.
+
+The way this is done is by defining a enum that accepts all valid key input for editor. Due to the nature of the enum extending past	`128` for special non-ascii characters, we use an `int` data type instead of a `char` to prevent integer overflow.
+
+```c
+enum editorKey {
+	BACKSPACE = 127,
+	ARROW_LEFT = 1000,
+	ARROW_UP,
+	ARROW_DOWN,
+	ARROW_RIGHT,
+	DEL_KEY,
+	PAGE_UP,
+	PAGE_DOWN,
+	HOME_KEY, 
+	END_KEY,
+	NO_KEY_PRESS,
+};
+```
+
+We then wrap all key input logic, which maps ascii and special character streams into a single integer to process easily, as `get_key`. When we are in raw mode, we receive the key input immediately, if a user enters a regular letter (capital letter or small letter), we receive that and return it as its regular ascii code. While special keys like arrow keys, home and delete keys arent usually sent as standard ascii, rather as [ansi escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). 
+
+[VT100](https://espterm.github.io/docs/VT100%20escape%20codes.html) escape codes start with an escape sequence, `\x1b` (hex) or `\033` (oct), and follow a stream of ascii characters to indicate a special character or special terminal operation. For example, right arrow key is represented as `\x1b[C` or your delete key as `\x1b3~`. 
+
+Certian keys like <kbd>Enter</kbd> and <kbd>Backspace</kbd> do not need to be processed using the enum. These keys are already represented as `\r` and `\b` using pure ascii, so we are able to fit this operating using one integer variable, which was not possible with other key input!
+
+```c
+int get_key() {
+	char c = '\0';
+	ssize_t res = read(STDIN_FILENO, &c, 1);
+
+	// If not special character, return ascii value as is
+	if (c != '\x1b') return c;
+
+	// Capture special keys, i.e Arrow keys
+	char special[3];
+	
+	// Special characters have trailing characters left to read
+	read(STDIN_FILENO, &special[0], 1);
+	read(STDIN_FILENO, &special[1], 1);
+
+	if (special[0] == '[') {
+		switch (special[1]) {
+			case 'A': return ARROW_UP;
+			...
+			case 'H': return HOME_KEY;
+		}
+
+		// Numbers as the 2nd char indicates more special keys
+		if (special[1] >= '0' && special[1] <= '9'){
+			read(STDIN_FILENO, &special[2], 1) != 1);
+
+			if (special[2] != '~') return '\x1b';
+			switch (special[1]) {
+				case '1': case '7': return HOME_KEY;
+				...
+				case '3': return DEL_KEY;
+			}
+		} 
+	}
+
+	return '\x1b'; // We got an escape code but it was incomplete
+}
+```
