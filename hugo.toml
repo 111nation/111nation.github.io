@@ -1,8 +1,53 @@
 baseURL = 'https://111nation.github.io/'
 locale = 'en-us'
-title = 'My New Hugo Project'
+title = '111Nation DevBlog'
 theme = 'hugo-theme-retrocss'
 
 [caches]
   [caches.images]
     dir = ':cacheDir/images'
+
+# Shortcodes and render hooks emit real markup.
+[markup.goldmark.renderer]
+  unsafe = true
+
+# Keep tags reading the way they were written.
+capitalizeListTitles = false
+
+[pagination]
+  pagerSize = 6
+
+[params]
+  description = "Systems Engineering | Software Development | Web Development"
+  tagline = ""     # appended to the home page's <title>
+
+  # --- chrome ---
+  accentHue = "primary"   # any RetroCSS hue: teal, violet, gold, navy, …
+  borderRadius = "0"      # one token rounds the entire framework
+  fontHeading = "'Segoe UI', Tahoma, sans-serif"        # e.g. "'Segoe UI', Tahoma, sans-serif"
+  sidebar = "left"        # left | right | off
+
+  # --- content ---
+  dateFormat = "2 January 2006"
+  showReadingTime = true
+  showAuthor = true
+  showToc = true
+  relatedPosts = 3
+  mainSections = ["posts"]
+  docsSection = "docs"
+
+  # --- features ---
+  search = true
+  themeCredit = true      # "Built with Hugo and RetroCSS for Hugo" in the footer
+
+  # --- SEO ---
+  images = ["images/og-card.png"]
+  twitterSite = "@you"
+
+  [params.author]
+    name = "@111nation"
+    initials = "<3"
+    bio = "Heyy!\n\nI love learning and making tools! I'm obsessed with Operating Systems and understanding computers down to the silicon level. In my free time I enjoy experimenting with VMs, learning about systems, and contributing to Free/Libre Open Source.\n\nMy philosophy of free/libre computing is heavily inspired by the revolutions of GNU, GNOME, KDE, and other FOSS projects.\n\nAll my work is a tribute to the amazing geniuses and contributors to modern computing (Ada Lovelace, Bill Joy, Richard Stallman, et al.).\n\nI hope you enjoy my devblog!\n\n~ 111nation"
+
+  [params.comments]
+    provider = "none"     # none | giscus | utterances
