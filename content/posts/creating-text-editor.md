@@ -26,10 +26,12 @@ My desire of actually making use of this information manifested in me making a v
 
 Suprisingly a lot! My goal with Editor was to not use any 3rd party libraries, only restricting myself to core system libraries and system calls. This forced me to see how userland utilities behave at the lowest level, inevitably uncovering the 'blackboxes' of how Operating Systems function.
 
-## Technical Dive
+## Getting Started
 
 {{< alert type="warning" title="Warning" >}}
 Code examples are purposefully simplified for illustrative purposes, view the whole source code [here](https://github.com/111nation/Editor)
+
+It is impossible for me to go through everything in this blog, so the following will be a heavily stripped down to the bare essentials that relate to systems programming and core features.
 {{</ alert >}}
 
 ### Setting up the terminal 
@@ -154,5 +156,125 @@ int get_key() {
 	}
 
 	return '\x1b'; // We got an escape code but it was incomplete
+}
+```
+
+After representing complex keys as a single integer, we can pass this to `process_keypress` which makes editor do something. It is always excellent practice to seperate programs into modules with specific purposes!
+
+## Implementing Text Editing
+
+### Displaying Structured Text
+
+To be able to manipulate and display text nicely we need to structure text into an easily iterable structure. To achieve this, Editor uses a main struct under the global editor settings, `esettings`, struct.
+
+As seen below, the text is structured so we can traverse easily. `erow` is a data type struct that stores data pertaining to a single row. If you notice, each row stores their actual ascii `chars` which is/ to be seen in the file. While `render` is  the same characters, but instead of displaying tabs as a regular `\t` code, we perform tab stopping and display it as four spaces. This is done because displaying a `\t` registers as a single character to the cursor, but actually takes up more than one character on your screen! 
+
+We store all the rows as an array of `erow` struct. 
+
+```c
+typedef struct erow { // Single row data
+	int index;
+	int size;		  // char size
+	int indent_level;
+	int rsize;		  // render size
+	char *chars;	
+	char *render;
+	...
+} erow;
+
+struct editorConfig {
+	...
+	unsigned int cx, cy; 			// Cursor position in file
+	unsigned int rx; 				// Rendered cursor position in rendered file
+	unsigned int ws_col, ws_row;	// Screen dimensions
+	int numrows;					// Number of rows in file
+	int rowoff; 					// Line number displayed as first line on screen 
+	int coloff;						// Character of current line displayed as first character on screen
+	erow* row;						// File row data
+	...
+};
+```
+
+### Displaying Text
+
+
+
+### File Operations
+
+Opening a file is pretty easy even with POSIX system calls, there are few things to remember though!
+
+We copy the name of the file from the function argument into `esettings.filename` using [`strdup`](https://man7.org/linux/man-pages/man3/strdup.3.html). Primitive C strings in runtime are stored as contiguous element, we cannot simply set `esettings.filename = filename`. This will produce what is called a **shallow copy**. A shallow copy only copies a pointer that refers to the same block of memory, so both `esettings.filename` and `filename` will incorrectly point to the same string! `filename` may be a literal or stack initiated variable which does not survive throughout the program execution. Thus makes `esettings.filename` risk pointing to a invalid address producing segmentation faults!
+
+
+`eopen` grabs each line of a file and passes the string representation of a row into `insert_row` which structures the row properly into a proper `erow` format. `esettings.dirty` is merely there to track how many bytes have been modified compared to the original file. Since nothing was modified, the file is still clean :)
+
+```c
+void eopen(char* filename) {
+	free(esettings.filename); // Clear previous file pointer
+	esettings.filename = strdup(filename);
+	
+	eselect_syntax_highlight();
+
+	FILE *fp = fopen(filename, "r");
+
+	char *line = NULL;
+	size_t linecap = 0;
+	ssize_t len;
+	while((len = getline(&line, &linecap, fp)) != -1) {
+		// Remove Trailing '\n' and '\r'
+		while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r')) len--;
+		insert_row(esettings.numrows, line, len);
+	}
+
+	free(line);
+	fclose(fp);
+
+	esettings.dirty = 0;
+}
+```
+
+To save to a file we need a way to prompt the user for a file name
+
+
+```c
+void esave() {
+	esettings.filename = prompt("Save file as:\t %s", NULL);
+		if (esettings.filename == NULL) {
+			eset_message("Save aborted");
+			return;	
+		}
+		eselect_syntax_highlight();
+	}
+
+	int len;
+	char *buf = erows_to_string(&len);
+
+	int fd = open(esettings.filename, O_RDWR | O_CREAT, 0644);
+
+	if (fd == -1) {
+		goto cleanup_buf;
+	}
+
+	if (ftruncate(fd, len) == -1) {
+		goto cleanup_fd;
+	}
+
+	if (write(fd, buf, len) != len) {
+		goto cleanup_fd;
+	}
+
+	eset_message("%d bytes written to disk", len);
+
+	close(fd);
+	free(buf);
+	esettings.dirty = 0;
+	return;
+
+	cleanup_fd:
+		close(fd);
+	cleanup_buf:
+		free(buf);
+	
+	eset_message("Error Saving! I/O error: %s", strerror(errno));
 }
 ```
