@@ -4,9 +4,13 @@ title: "Retro Dispatch"
 
 ```batch
 C:\> cd introduction
-C:\> type introduction.txt
+C:\introduction\> type introduction.txt
 
-Hai! Welcome to my DevBlog, im @111nation and I am an OS hobbyist as well as a hobbyist and in training engineer. I love computers and I hope this site helps share some of my experiences with you!
+Hai! <3
+
+Welcome to my DevBlog. I'm @111nation, an OS hobbyist and an engineer in training. I love computers, and I hope this site helps share some of my experiences with you!
+
+I'm reacheable at tafara.k@outlook.com!
 
 C:\>
 ```
