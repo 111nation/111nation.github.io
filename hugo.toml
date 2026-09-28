@@ -47,7 +47,7 @@ capitalizeListTitles = false
   [params.author]
     name = "@111nation"
     initials = "<3"
-    bio = "An aspiring System Engineer\n\nGithub: @111nation"
+    bio = "An aspiring System Engineer\n\nGithub: [111nation](https://github.com/111nation)\n\nEmail: [tafara.k@outlook.com](mailto:tafara.k@outlook.com)"
 
   [params.comments]
     provider = "none"     # none | giscus | utterances
