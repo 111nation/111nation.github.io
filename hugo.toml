@@ -1,6 +1,6 @@
 baseURL = 'https://111nation.github.io/'
 locale = 'en-us'
-title = '111Nation DevBlog'
+title = "Chloe's devblog"
 theme = 'hugo-theme-retrocss'
 
 [caches]
@@ -45,9 +45,9 @@ capitalizeListTitles = false
   twitterSite = "@you"
 
   [params.author]
-    name = "@111nation"
+    name = "𝐜𝐡𝐥𝐨𝐞"
     initials = "<3"
-    bio = "An aspiring System Engineer\n\nGithub: [111nation](https://github.com/111nation)\n\nEmail: [tafara.k@outlook.com](mailto:tafara.k@outlook.com)"
+    bio = "An aspiring System Engineer\n\n[My Github](https://github.com/111nation)"
 
   [params.comments]
     provider = "none"     # none | giscus | utterances
