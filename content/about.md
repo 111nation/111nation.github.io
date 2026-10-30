@@ -5,7 +5,7 @@ menus: "main"
 weight: 40
 ---
 
-I'm a second year **Computer Engineering** student from South Africa (as of 2026). 
+Hey I'm 𝐜𝐡𝐥𝐨𝐞! I'm a **Computer Engineering** student and future systems programmer in the making! 
 
 [My Github](https://github.com111nation/)
 

@@ -5,6 +5,7 @@ title = 'Editor - How I Made a Zero Dependency Text Editor Like Vim In C Using P
 categories = ["Unix System Programming"]
 tags = ["c", "systems programming", "unix", "tool"]
 cover = "https://github.com/user-attachments/assets/f325c308-e128-4adf-a8c8-c9cbb00c8d5c"
+feature=false
 +++
 <br />
 

@@ -27,7 +27,7 @@ In order to successfully achieve writing a kernel module, I needed to pick an op
 
 The prerequisites for kernel development are obviously the base development tools such as the FreeBSD `clang` compiler and FreeBSD `make` tool.
 
-Notice in the Makefile under [Makefile](#makefile) does not seem to appear basic gnu/unix syntax. The FreeBSD organization has their own makefile syntax that is able to bind your source code to the operating system's source as simply as possible. 
+Notice in the [Makefile](#makefile) does not seem to appear basic gnu/unix syntax. The FreeBSD organization has their own makefile syntax that is able to bind your source code to the operating system's source as simple as possible. 
 
 The line, `.include <bsd.kmod.mk>`, under the Makefile is a rule to bind the source code with the operating system's build rules to produce a `.ko` loadable kernel module. In order for this operation to successfully compile my kernel module, I needed the full FreeBSD source code under `/usr/src`. I resolved this by cloning the source code from `https://git.freebsd.org/src.git` inside that directory.
 
