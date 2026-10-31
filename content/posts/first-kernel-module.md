@@ -52,7 +52,7 @@ Module unloaded
 It is also able to display a message when it is queried via:
 ```sh
 ~ $ sysctl kern.module_message
-Hey im Chloe! This is my kernel module!
+Hey im 111nation! This is my kernel module!
 ```
 
 This code taps into FreeBSD's `sysctl` kernel subsystem. `sysctl` manages stuff like kernel parameters. We use `SYSCTL_STRING` to register our message into this subsystem. This allows the `sysctl` CLI tool to have access this string. We then use a large struct to define events which allow our module to do something when we `MOD_LOAD` and `MOD_UNLOAD`.
@@ -79,7 +79,7 @@ This is the source code for `module_sysctl.c`
 #include <sys/systm.h>
 #include <sys/sysctl.h>
 
-static char msg[128] = "Hey im Chloe! This is my kernel module!";
+static char msg[128] = "Hey im 111nation! This is my kernel module!";
 
 SYSCTL_STRING(_kern, OID_AUTO, module_message, CTLFLAG_RW,
 		msg, sizeof(msg), "This is a kernel string from module_sysctl!");

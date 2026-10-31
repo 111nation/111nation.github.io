@@ -5,7 +5,7 @@ menus: "main"
 weight: 40
 ---
 
-Hey I'm 𝐜𝐡𝐥𝐨𝐞! I'm a **Computer Engineering** student and future systems programmer in the making! 
+Hey I'm 111nation! I'm a **Computer Engineering** student and future systems programmer in the making! 
 
 [My Github](https://github.com111nation/)
 
